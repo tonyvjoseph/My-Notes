@@ -1,0 +1,341 @@
+Web API
+by kuduVenkat
+-------------
+
+> Web Api maps Verbs to Methods
+
+ex: Method name 'get' maps to GET
+	Method name 'post' maps to POST
+
+> Able to host outside of IIS
+
+> Requires .NET 4.0 or above
+
+> Web API is a HTTP based services.
+> web api can consume by 
+	.browsers
+	.Mobile/Desktop applications
+	.IOTs
+> Asp.Net Web APIs is a framework to build Web API.
+
+> REST-ful services
+	.REST is an architectural pattern for creating services
+	.REST architectural pattern specifies a set constraints that should adhere.
+	
+REST Constraints:
+	.ClientServer
+		Client send a request to the server and server response to the client request.
+	.Stateless
+		We did not storing anything related to the client on server.
+		Each request is having necessary information to handle the request
+	.Cacheable
+		Avoid unnecessary calls to the server
+	
+Example:
+	localhost:6485/api/values
+	
+	Here, 'values' is the api controller.
+	By default this is mapped to the 'GET' method of the 'values' controller.
+	This will call the 'GET' method, which does not have parameters
+	
+	
+Request Verbs:
+	GET, POST, PUT, DELETE
+	
+	Request Header:
+		Contains additional informations about the request.
+		Ex: What type of response is required.
+	Request Body:
+		Contains the data send to the server.
+		Data format may be in xml and json.
+	Response Body:
+		Contains the data sent as response from the server.
+		Data format may be in xml and json.
+	Response status code:
+		provide the client the details of the client request.
+		Status of the request.
+		Ex: 200:OK, 404:Not found, 204: No Content, 
+		
+Asp.Net WEB API and SQL Server:
+
+Video-5: 
+Asp.Net Web API Content Negotiation:
+	.Client is able to decide the format of the response that they want from the server.
+	.If Accept header is not specified, by default Web API returns JSON data.
+	.Accept: application/xml
+	.Accept: application/json
+By default WEB API returns JSON data
+
+Video-6: 	
+MediaTypeFormatter:
+	MediaTypeFormatter is an abstract class from which JsonMediaTypeFormatter and XmlMediaTypeFormatter classes inherit from.
+	These formatters are used to format the json or xml data
+
+Video-7:	
+How to return only JSON from Asp.Net Web API services
+	config.Formatters.Remove(config.Formatters.XmlFormatter);
+	This need to be add in WebApiConfig.cs
+	
+How to return only XML from Asp.Net Web API services
+	config.Formatters.Remove(config.Formatters.JsonFormatter);
+	This need to be add in WebApiConfig.cs
+
+POST method in Asp.Net Web API.
+	Ex:
+		public void Post([FromBody]Employee employee)
+		{ }
+		
+		*If the return type of post method is void, then web api will return status code as 204, NoContent.
+		
+		public HttpReponseMessage Post([FromBody]Employee employee)
+		{ }
+		
+Video-8:
+
+DELETE Method
+
+Video-9:
+
+PUT Method
+
+Video-10:
+Custom Method Names in Web Api
+
+Video-11:
+
+Web API Query String Parameters
+
+Video-12:
+--------
+Parameters FromBody and From Uri in Web Api
+	
+Web API default convention for binding parameters	
+	# If the parameters are simple type like int, bool, double etc.. 
+	  Web Api tries to get the value from the uri (either from route data or Query string)
+	# If the parameters are comples like customers, employees etc.. 
+	  web api tries to get the value from the request body
+	# Use [FromBody] attribute to force web api to get the parameters from the request body
+	# Use [FromUri] attribute to force web api to get the parameters from the URI (Route data or query string)
+	Example:
+		public HttpResponseMessage Put([FromUri]int index, [FromBody]string value)
+
+Video-13:
+---------
+Call ASP NET Web API from jQuery
+
+Video-14 and 15:
+----------------
+Calling ASP NET Web API service in a cross domain using jQuery ajax
+
+Same Origin policy:
+------------------
+Browser allow a web page to make AJAX requests only within the same domain.
+Browser security prevents web page from making AJAX calls to another domain.
+This is called same origin policy.
+Browser won't allow cross domain AJAX requests.
+
+same origin:
+web page: http://localhost:50101/Employees.html
+api: 	  http://localhost:50101/api/values/GetEmployeeList
+
+Different origin:
+web page: http://localhost:1234/Employees.html
+api: 	  http://localhost:5678/api/values/GetEmployeeList
+
+Cross Domain Ajax calls can be possible by following ways
+01. Using JSONP (JSON with padding)	
+	> install-package WebApiContrib.Formatting.JsonP
+		Successfully installed 'WebApiContrib.Formatting.Jsonp 3.0.2'
+	####Not working for me!
+	
+02. Enabling CORS(Cross Origin Resource Sharing)
+	To allow cross domain ajax calls by Enabling CORS
+	
+	01. Install Microsoft Asp.Net WebAPi.CORS package
+	> install-package Microsoft.AspNet.WebApi.Cors
+	
+	02. Place below code in WebApiConfig under Register method to enable CORS globally(means applicable for all api controllers and action methods
+	
+		EnableCorsAttribute cors = new EnableCorsAttribute("*", "*", "*");
+		config.EnableCors(cors);
+	
+		Parameters of EnableCorsAttribute are origins, headers and methods.
+		> origins: "http://www.example.com, ......., .....", 
+		> headers: "accept,content-type,origin,x-my-header", ...etc
+		> methods: "get,post"...etc
+		
+		Use Following code to allow cross domain ajax calls to all the urls, headers and methods. 
+		> EnableCorsAttribute cors = new EnableCorsAttribute("*", "*", "*");
+		
+		Use Following code to allow cross domain ajax calls only to the mentioned urls, headers and methods. 
+        > EnableCorsAttribute cors = new EnableCorsAttribute("http://localhost:53065, http://localhost:1234", "accept,content-type,origin,x-my-header", "get,post");
+		
+	03. To enable CORS to allow cross domain ajax calls within a controller
+		
+		Place below code on controller to allow cross domain ajax calls within a controller
+		[EnableCorsAttribute("*", "*", "*")]
+		or
+		[EnableCors(origins: "http://www.example.com", headers: "*", methods: "*")]
+		public class ItemsController : ApiController
+		{
+			public HttpResponseMessage GetAll() { ... }
+			public HttpResponseMessage GetItem(int id) { ... }
+			public HttpResponseMessage Post() { ... }
+
+			[DisableCors]
+			public HttpResponseMessage PutItem(int id) { ... }
+		}
+		
+	04. To Disable CORS on a specific action method use below code
+		
+		[DisableCors]
+		
+	05. Per Action
+		To enable CORS for a single action, set the [EnableCors] attribute on the action method. 
+		The following example enables CORS for the GetItem method only.
+		
+		public class ItemsController : ApiController
+		{
+			public HttpResponseMessage GetAll() { ... }
+
+			[EnableCors(origins: "http://www.example.com", headers: "*", methods: "*")]
+			public HttpResponseMessage GetItem(int id) { ... }
+
+Video-16:
+----------
+
+Enable SSL in Visual Studio Development Server
+
+	01. Goto WebApi Project
+	02. Press F4 for properties
+	03. Enable SSL and we will get the url also
+	
+Video-17:
+---------
+
+ASP NET Web API enable HTTPS
+
+Video-18:
+---------
+
+Implementing basic authentication in ASP NET Web API
+
+Providing a security to the Web API’s is important so that we can restrict the users to access to it. 
+We can provide the security in two different ways:
+	Basic authentication.
+	Token based authentication.
+	
+Video-19:
+---------
+Call web api service with basic authentication using jquery ajax
+
+-------------------------------------------
+
+Token based authentication.
+===========================
+
+		User Requests Access with Username / Password
+		Application validates credentials
+		Application provides a signed token to the client
+		Client stores that token and sends it along with every request
+		Server verifies token and responds with data
+		When the user logs out, the token is destroyed.
+		
+	Token based authentication (with custom database):
+	=================================================
+		Refer the below url for best example. OAuth Web API token based authentication with custom database
+		
+		url: http://www.advancesharp.com/blog/1216/oauth-web-api-token-based-authentication-with-custom-database
+		
+		http://csharp-video-tutorials.blogspot.com/2016/12/aspnet-web-api-login-page.html
+		
+		http://csharp-video-tutorials.blogspot.com/2016/12/web-api-bearer-token-example.html
+		
+	Token based authentication:
+	--------------------------
+	01. Validate the credentials by calling the url.
+		ex: url: '/token',
+		See:
+			app_start\startup.auth.cs, 
+			\providers\applicationoauthprovider.cs
+	02. Store the response token in our application (ex: sessionStorage.setItem("accessToken", response.access_token);)
+	03. Pass this access_token as Authorization through headers for each subsequent calls. Add 'Bearer' along with accessToken.
+		ex: headers: {
+					'Authorization': 'Bearer ' + sessionStorage.getItem("accessToken")
+	04. If the access token expired (status code is 401) redirect the user to the login page
+	
+	D:\MyLearningApps\WebApi\WebApi\Login.html
+	-------------------------------------
+	  $('#btnLogin').click(function () {
+		$.ajax({
+			// Post username, password & the grant type to /token
+			url: '/token',
+			method: 'POST',
+			contentType: 'application/json',
+			data: {
+				username: $('#txtUsername').val(),
+				password: $('#txtPassword').val(),
+				grant_type: 'password'
+			},
+			// When the request completes successfully, save the
+			// access token in the browser session storage and
+			// redirect the user to Data.html page. We do not have
+			// this page yet. So please add it to the
+			// EmployeeService project before running it
+			success: function (response) {
+				debugger
+				sessionStorage.setItem("accessToken", response.access_token);
+				window.location.href = "Data.html";
+				//window.location.href = "Employees.html";
+			},
+			// Display errors if any in the Bootstrap alert <div>
+			error: function (jqXHR) {
+				$('#divErrorText').text(jqXHR.responseText);
+				$('#divError').show('fade');
+			}
+			});
+		});
+	
+	D:\MyLearningApps\WebApi\WebApi\Data.html
+	-----------------------	------------------
+	$('#btnLoadEmployees').click(function () {
+                $.ajax({
+                    //url: '/api/employees',
+                    url: 'api/values/GetEmployeeList',
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer '
+                            + sessionStorage.getItem("accessToken")
+                    },
+                    success: function (data) {
+                        $('#divData').removeClass('hidden');
+                        $('#tblBody').empty();
+                        $.each(data, function (index, value) {
+                            var row = $('<tr><td>'
+                                + value.ID + '</td><td>'
+                                + value.FirstName + '</td><td>'
+                                + value.LastName + '</td><td>'
+                                + value.Gender + '</td><td>'
+                                + value.Salary + '</td></tr>'
+                                );
+                            $('#tblData').append(row);
+                        });
+                    },
+                    error: function (jQXHR) {
+                        // If status code is 401, access token expired, so
+                        // redirect the user to the login page
+                        if (jQXHR.status == "401") {
+                            $('#errorModal').modal('show');
+                        }
+                        else {
+                            $('#divErrorText').text(jqXHR.responseText);
+                            $('#divError').show('fade');
+                        }
+                    }
+                });
+
+
+
+
+
+		

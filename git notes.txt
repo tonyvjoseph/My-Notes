@@ -1,0 +1,24 @@
+
+https://www.youtube.com/watch?v=OVL7R0eT8jw
+
+
+go to the project folder 
+ > D:\MyLearningApps
+
+Remove git related files
+ >rd .git /S/Q
+
+Then initialize
+ > git init
+
+Then
+ > git add .
+
+Then commit
+ > git commit -m "My First commit"
+
+Then
+ > git remote add origin https://github.com/tonyvjoseph/WebApiPro.git
+
+Then push the project
+ > git push -u origin master

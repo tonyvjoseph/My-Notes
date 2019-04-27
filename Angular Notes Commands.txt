@@ -1,0 +1,103 @@
+------------------------------------
+
+01 Install Node.js and nmp
+	https://nodejs.org/en/
+	
+	Angular requires Node.js version 8.x or 10.x.
+	node -v  : To check your version, run node -v in a terminal/console window.
+	npm -v : To check the npm version
+	
+02 Visual Studio Code
+
+03 Install the Angular CLI
+
+	Install Globablly:
+		npm install -g @angular/cli
+	
+	Install Locally:
+		npm install @angular/cli
+		
+	Refer:
+		https://www.npmjs.com/package/@angular/cli
+	
+	To find Angular CLI version:
+		ng v
+		
+	To find available commands:
+		ng -v
+		or
+		ng --v
+		
+	Refer for the issue "ng not recognized...":
+	Refer To set up PATH in Environment Variables:
+		https://stackoverflow.com/questions/37991556/ng-is-not-recognized-as-an-internal-or-external-command
+		
+--------------------------------------------
+ng new 
+//To create a new workspace and an initial app project:
+ex:
+ng new my-angular-app
+
+ng serve
+or
+ng s
+//To Build and serve our app, and rebuilding on file changes
+ex:
+cd my-angular-app  //Go to the workspace folder 
+ng serve
+
+ng serve --open
+//The --open flag opens a browser to http://localhost:4200/.
+
+==========================================================================
+Solution for the port issue:
+Issue: “Port 4200 is already in use” when running the ng serve command
+
+Solution:
+01. Open your cmd.exe as administrator
+02. then Find the PID of port 4200
+	netstat -ano | findstr :4200
+	We will get an output like below:
+	TCP    127.0.0.1:4200         0.0.0.0:0              LISTENING       9968
+03. kill only port 4200
+	taskkill /PID 9968 /F
+
+04. now you can do "ng-serve" to start your angular app at the same port 4200
+
+==========================================================================
+
+ng generate component my-new-component
+OR
+ng g component my-new-component
+OR
+ng g c my-new-component
+//To create a new component
+ 
+ng g component plainsight/yourchildcompname
+//the above will create a yourchildcompname component and the necessary files inside plainsight folder. 
+//if plainsight folder doesn't exist then it will create that folder as well.
+
+Create New Folder and Component:
+01. Right Click on the existing folder and open a new Terminal and 
+02. generate new component. It will create a new folder also
+Ex: ng g c employee   //This will create employee component inside employee folder.
+
+Create New Class:
+g generate class <name> [options]
+OR
+ng g class <name> [options]
+OR
+ng generate class <name> --type=type
+>> class name will be like "name.type.ts"
+OR
+ng generate class <name> --skipTests=true|false
+>> if skipTests=When true, does not create "spec.ts" test files for the new class.
+
+Ex:
+	ng generate class foo
+	>> It will create a class "foo.ts"
+	
+	ng generate class foo --type=bar
+	>> It will create a class "foo.bar.ts"
+	
+	
