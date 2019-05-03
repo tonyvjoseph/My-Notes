@@ -1,0 +1,622 @@
+
+
+Angular is written in TypeScript.
+NgModules
+The basic building blocks of an Angular application are NgModules, which provide a compilation context for components.
+An NgModule is defined by a class decorated with @NgModule(). 
+Components
+Components define views, which are sets of screen elements that Angular can choose among and modify according to your program logic and data.
+services
+Components use services, which provide specific functionality not directly related to views
+root module or AppModule
+Every Angular app has a root module, conventionally named AppModule, which provides the bootstrap mechanism that launches the application
+
+
+
+Node.js
+Node.js is an open-source, cross-platform JavaScript run-time environment that executes JavaScript code outside of a browser.
+
+npm
+The npm package gets installed along with nodejs.
+npm is a package manager for the JavaScript programming language. 
+It is the default package manager for the JavaScript runtime environment Node.js. 
+
+TypeScript 
+Angular6 uses TypeScript 2.9 version  
+Angular 4 uses TypeScript version 2.2. 
+TypeScript is an open-source programming language developed and maintained by Microsoft. 
+TypeScript is designed for development of large applications and transcompiles to JavaScript.
+
+Angular 6
+Angular team came up with Angular CLI which eases the installation.
+npm install -g @angular/cli //command to install angular 6
+
+Visual Studio Code
+We will use Visual Studio Code IDE for working with Angular 6; you can use any IDE, i.e., Atom, WebStorm, etc.
+
+------------------------------------
+
+01 Install Node.js and nmp
+	https://nodejs.org/en/
+	
+	Angular requires Node.js version 8.x or 10.x.
+	node -v  : To check your version, run node -v in a terminal/console window.
+	npm -v : To check the npm version
+	
+02 Visual Studio Code
+
+03 Install the Angular CLI
+
+	Install Globablly:
+		npm install -g @angular/cli
+	
+	Install Locally:
+		npm install @angular/cli
+		
+	Refer:
+		https://www.npmjs.com/package/@angular/cli
+	
+	To find Angular CLI version:
+		ng v
+		
+	To find available commands:
+		ng -v
+		or
+		ng --v
+		
+	Refer for the issue "ng not recognized...":
+	Refer To set up PATH in Environment Variables:
+		https://stackoverflow.com/questions/37991556/ng-is-not-recognized-as-an-internal-or-external-command
+		
+--------------------------------------------
+ng new 
+//To create a new workspace and an initial app project:
+ex:
+ng new my-angular-app
+
+ng serve
+or
+ng s
+//To Build and serve our app, and rebuilding on file changes
+ex:
+cd my-angular-app  //Go to the workspace folder 
+ng serve
+
+ng serve --open
+//The --open flag opens a browser to http://localhost:4200/.
+
+==========================================================================
+Solution for the port issue:
+Issue: “Port 4200 is already in use” when running the ng serve command
+
+Solution:
+01. Open your cmd.exe as administrator
+02. then Find the PID of port 4200
+	netstat -ano | findstr :4200
+	We will get an output like below:
+	TCP    127.0.0.1:4200         0.0.0.0:0              LISTENING       9968
+03. kill only port 4200
+	taskkill /PID 9968 /F
+
+04. now you can do "ng-serve" to start your angular app at the same port 4200
+
+==========================================================================
+For folder structure and File description refer below url.
+	https://www.tutorialspoint.com/angular6/angular6_project_setup.htm
+	
+app
+It contains the files described below. These files are installed by angular-cli by default.
+
+app.module.ts 
+	This code has reference to different libraries, which are imported. 
+	Angular-cli has used these default libraries for the import - angular/core, platform-browser. 
+	They are imported and saved into variables such as declarations, imports, providers, and bootstrap.
+	
+	declarations − In declarations, the reference to the components is stored. 
+	imports − This will have the modules imported
+	providers − This will have reference to the services created.
+	bootstrap − This has reference to the default component created, i.e., AppComponent.
+
+Component:
+app.component.ts 
+	The class for the component is defined over here. You can do the processing of the html structure in the .ts file. 
+	The processing will include activities such as connecting to the database, interacting with other components, routing, services, etc.
+app.component.html 
+	The html code will be available in this file.	
+app.component.spec.ts 
+	These are automatically generated files which contain unit tests for source component.
+index.html
+This is the file which is displayed in the browser.
+The body has <app-root></app-root>. This is the selector which is used in app.component.ts file and will display the details from app.component.html file.
+
+
+Template VS Template URL:
+Template:
+We can write html code in template.
+If the html is in single line then we can write its within a single quotes ('') OR back tick(``)
+If the html code is more than one line the we should use within a back tick(``)
+
+Template URL:
+USed to specify the path of the html file
+
+Interpolation:
+--------------
+It is a data binding. Passing data from component class to html. 
+Binding value using {{ }}	
+Properties in a component class can be bind to the html using {{ }}, its called interpolation
+Examples:
+	{{ Name}}
+	{{ 10+20+10}}	//This display the sum 40 in UI
+	{{firstName ? firstName : 'No name specified'}}	//Conditional operators can be used
+	 <img src='{{imagePath}}'/>   //Image path can be set using interpolation
+We can also call class method using interpolation
+	<h3 style="text-align:left">Employee {{ getFullName()}}</h3>  
+	//Here, getFullName is a method name from component class
+	
+One way and two way data binding
+	-From component to view template binding
+	-From View Template to Component
+Two way binding from Component to View Template and From View Template to Component data binding
+
+Property binding
+---------------
+Its also Passing data from component class to html. 
+Its one way data binding
+Example:
+	<img [src]='titleImagePath'/>  
+	<button [disabled]='isDisabled'>Click Me</button>
+	<button bind-disabled='isDisabled'>Click Me</button> //Canonical way
+
+The difference between Interpolation and Property binding
+	>Interpolation is a special syntax that Angular converts into a property binding. 
+	>Interpolation is just a convenient alternative to property binding. 
+
+Difference between HTML attribute and DOM property.	
+--------------------------------------------------
+	Angular data binding is to the DOM elements, not to the html attributes.
+	DOM stands for Document Object Model. 
+	When a browser loads a web page, the browser creates a Document Object Model of that page. 
+	
+What is the difference between HTML element attribute and DOM property
+	Attributes are defined by HTML, where as properties are defined by the DOM.
+	Attributes initialize DOM properties. Once the initialization complete, the attributes job is done.
+	Property values can change, where as attribute values can't.
+Ex:
+	<input id='inputId' type='text' value='Tom'>
+	http://csharp-video-tutorials.blogspot.com/2017/06/html-attribute-vs-dom-property.html
+	
+	inputId.getAttribute('value') //getting the attribute value
+	inputId.value //getting the property value
+	
+	Even if we change the value in textbox, the attribute value will be always 'Tom'
+	But property value will change, if we change the value in textbox 
+
+Attribute Binding
+-----------------	
+Attribute Binding using interpolation example:
+	Use "attr." along with attribute for attribute binding. 
+	1. Use of interpolation for Attribute Binding
+		<th attr.colspan="{{columnSpan}}">
+	2. Other ways
+		<th [attr.colspan]="columnSpan">
+	3.  <th colspan='columnSpan'>
+	
+	
+CSS Class Binding
+-----------------
+Examples:
+	Create a class property 'cssClassToApply' and assign css classes to that
+		cssClassToApply='boldClass colorClass';
+		isApplyColorClass=true;
+	Then bind this property to the html class property
+
+	<button [class]="cssClassToApply">CSS Class binding example</button>
+    >> In above example both 'boldClass colorClass' classes will apply to the button
+		
+	<button class="italicsClass" [class.colorClass]="isApplyColorClass">CSS Class binding with condition</button>
+	>> In above example 'italicsClass' will apply to the button
+	>> And 'colorClass' will apply if "isApplyColorClass=true", which is setting in .ts file
+	>> Also we can Use "!". 
+		Ex:[class.colorClass]="!isApplyColorClass"
+	
+	Same way we can remove a css class also
+	Ex:
+	<button class="boldClass italicsClass colorClass" [class.colorClass]="!isApplyColorClass">
+	>> Here all 3 classes are applied but 'colorClass' will remove or apply based on 'isApplyColorClass' value
+	
+Using [ngClass]:
+		Ex: 
+		<button class="italicsClass" [ngClass]='addCssUsingNgClass1()'>CSS Class using ngClass</button>
+		
+		>> Here addCSSClasses() is a method/class returning css class names 
+		
+		isApplyColorClass=true;
+		isApplyBoldClass=true;
+		
+		Ex 01.>>
+		addCssUsingNgClass1(){
+			let classes={
+			  colorClass:this.isApplyColorClass,
+			  boldClass:this.isApplyBoldClass
+			};
+			return classes;
+		  }
+		
+		Ex 02.>>
+		addCssUsingNgClass2(){
+			//return 'boldClass colorClass';
+			//OR
+			return { boldClass:this.isApplyBoldClass};
+		}
+		
+		
+Style binding 
+--------------
+	Create class properties like
+		isBold=true;
+		fontSize=20;
+	
+	Example:
+	 <button style="color:blue" [style.font-weight]="isBold? 'bold':'normal'" 
+                                [style.font-size.px]="fontSize">Inline Style binding</button>
+
+Using ngStyle:
+
+	>> Create a method
+	
+	addStyleUsingNgStyle(){
+		return { 'font-weight': this.isBold? 'bold':'Normal',
+				  'font-style':'Italic'};
+	}
+	
+	>> Use this class in [ngStyle] property
+	Example:
+	<button [ngStyle]="addStyleUsingNgStyle()">Inline Style binding using ngStyle</button>
+	
+	
+Event Binding
+-------------	
+	>> Use (click) or on-click to bind click event
+	>> Use parentheses symbol () with events to bind it to the html control
+	Ex:
+		<button (click)='onClick()'>Event binding</button>
+	
+	>> Also we can use "on-" along with event to bind it
+	Ex:
+		<button on-click='onClick()'>Event binding-2</button>
+	
+
+*ngIf  (A  structural directive)
+-----------
+		>> *ngIf - The ng-if directive removes the HTML element if the expression evaluates to false.
+		>> * symbol indicates that its a structural directive
+		Ex:
+			<tr *ngIf='showDetails'>
+			
+		>> If the 'showDetails' value is false, then the <tr> won't bind to the DOM
+		>> ngIf : structural directive which conditionally adds or removes DOM elements.
+		
+[(ngModel]  Two way data Binding
+-------------------
+
+	>> Use [(ngModel] for two way data binding
+	Ex:
+		Name: <input type="text" [(ngModel)]='name'/>
+        <span>You entered: {{name}} </span>
+		
+	>> [(ngModel] is a combination of both property binding "[]" and event binding "()" for two way data binding
+	>> To avail ngModel, In app.module.ts file, we have to import forms module from angular forms
+		Here are the steps to import FormsModule into our AppModule
+		1. Open app.module.ts file
+		2. Include the following import statement in it
+			import { FormsModule } from '@angular/forms';
+		3. Also, include FormsModule in the 'imports' array of @NgModule
+			imports: [BrowserModule, FormsModule]
+
+
+*ngFor (A structural directive)
+----------
+	>> *ngFor is usually used to display an array or list of items
+	>> * symbol indicates that its a structural directive
+	Ex:
+		<tr *ngFor="let employee of employees">
+            <td>{{employee.code}}</td>
+            <td>{{employee.name}}</td>
+            <td>{{employee.gender}}</td>
+        </tr>
+
+	>> *ngFor='let employee of employees' - In this example 'employee' is called template input variable, 
+		which can be accessed by the <tr> element and any of it's child elements.
+	>> Use below code to show a message when the employees list empty or not exist
+	>> Ex:
+		 <tr *ngIf="!employees || employees.length==0">
+            <td colspan="3">No employees to display</td>
+        </tr>
+		
+		
+*ngFor trackBy:
+----------------
+	>> trackyBy: is using with *ngFor directive
+	>> *ngFor directive may perform poorly with large lists
+	>> A small change to the list like, adding a new item or removing an existing item may trigger recreation of entire DOM element(ex:<tr>)
+	>> This happens because Angular by default keeps track of objects using the object references.
+	>> Angular can avoid this with trackBy:.
+	>> Using trackBy: only the changed DOM element will recreate
+	Ex:
+		trackByEmpCode(index, employee){
+			return employee.code;
+		}
+		
+		<tr *ngFor="let employee of employees1;trackBy:trackByEmpCode">
+		
+	>> Angular is now tracking employee objects using the employee code instead of object references, 
+	>> Now, If we try to reload the list using any refresh button, only the changed DOM element(ex:<td>) or newly added DOM element will recreate
+	>>> Here, if any "employee.code" value changed then the corresponding entire <tr> itself will recreate
+	>>> If only one column value is changed, then only that <td> will recreate
+	>>> If any new item is added, then new <tr> will create
+	
+*ngFor index:
+--------------	
+	>> Use "index" keyword to find the index of the ngFor list item
+	Ex:
+		<tr *ngFor="let employee of employees1;trackBy:trackByEmpCode;let i=index">
+			<td>{{i}}</td>
+			
+	>> 
+*ngFor first and last
+--------------------
+	>> Use "first" and "last" keywords to find whether the item is the first or the last item
+	Ex:
+		<tr *ngFor="let employee of employees1;trackBy:trackByEmpCode;let i=index;let isFirst=first;let isLast=last">
+			<td>{{isFirst}}</td>
+            <td>{{isLast}}</td>
+			
+*ngFor even and odd
+--------------------
+	>> Use "even" and "odd" keywords to find whether the item is the even or the odd item
+	Ex:
+		<tr *ngFor="let employee of employees1;trackBy:trackByEmpCode;let i=index;let isFirst=first;let isLast=last;let isEven=even; let isOdd=odd;">
+			<td>{{isEven}}</td>
+            <td>{{isOdd}}</td>
+			
+			
+			
+Angular pipes "|"
+-----------------
+
+	>> Pipes transform data before display
+	>> Built in pipes include lowercase, uppercase, decimal, date, percent, currency etc
+	>> To apply a pipe on a bound property use the pipe character " | "
+	Examples:	
+	uppercase pipe:
+	
+		<td>{{employee.code | uppercase}}</td>
+		
+		>> uppercase pipe in this example converts employee code to uppercase
+		
+	date pipe:
+	
+		<td>{{employee.dateOfBirth | date:"fullDate"}}</td>
+		
+		>> This convert the date in full format like "Monday, September 6, 1982"
+		>> To use DatePipe, the date should be in MM\DD\YYYY format
+		>> https://angular.io/api/common/DatePipe
+		
+	Chain pipes	:
+		>> More than one pipes can be used with an item
+		
+		<td>{{employee.dateOfBirth | date:"fullDate" | uppercase}}</td>
+		<td>{{employee.dateOfBirth | date:"dd/MM/y" | uppercase}}</td>
+		
+	Date		https://angular.io/api/common/DatePipe
+	Decimal		https://angular.io/api/common/DecimalPipe
+	Currency	https://angular.io/api/common/CurrencyPipe
+	Percent		https://angular.io/api/common/PercentPipe
+
+	
+Angular custom pipe
+---------------------
+	>> We can create a custom pipe Mr. or Miss. prefixed to the employee name
+	
+	>> Create custom pipe "employee-title.pipe.ts"
+		
+		import { Pipe, PipeTransform } from '@angular/core';
+
+		@Pipe({
+			name:'EmpTitle'  //This will be the pipe name
+		})
+
+		export class EmployeeTitle implements PipeTransform{
+			//Here 'value' will get the value of the field were we placed this class.
+			//If we call this method from 'name' property then name value will available here
+			//But 'gender' value explicitly we have to pass
+			transform(value, gender){
+				return (gender.toLowerCase() == 'male' ? 'Mr. ' : 'Mrs. ') + value;
+			}
+		}
+	
+	>> Register "employee-title.pipe.ts" in "app.module.ts"
+		import { EmployeeTitle } from './employee/employee-title.pipe';
+		
+		Also add to the @NgModule declarations
+		
+	>> Use this pipe in html file as below
+		
+		<tr *ngFor="let employee of employees1;trackBy:trackByEmpCode">
+            <td>{{employee.code | uppercase}}</td>
+            <td>{{employee.name | EmpTitle:employee.gender}}</td>
+            <td>{{employee.gender}}</td>
+			
+			
+Angular Container and Nested components 			
+----------------------------------------AND
+Component Input and Output properties
+----------------------------------------AND
+Custom events using EventEmitter class
+---------------------------------------
+
+Nested components 
+------------------
+	>> Inside a component we can place another component. Its called Nested component
+	>> Parent component is called Container component and child component is called Nested component.
+	
+Input Properties (@Input() )
+------------------
+
+	>> Use input property to pass the values from the parent(container) component to the child(nested) component
+	>> Use "@Input" decorator to Convert a child component properties to an input property
+		parent component: employee-list.component
+		child component: employee-count.component
+	
+	Ex:	>> In child component (employee-count.component.ts)
+			@Input()
+			all;
+		
+			@Input()
+			male;
+			
+			@Input()
+			female;
+			
+		>> In child html (employee-count.component.html)
+			<span class="radioClass">Show : </span>
+
+			<input type="radio" name="options" />
+			<span class="radioClass">All({{all}})</span>
+
+			<input type="radio" name="options" />
+			<span class="radioClass">{{'Male(' + male + ')'}}</span>
+
+			<input type="radio" name="options" />
+			<span class="radioClass">{{'Female(' + female + ')'}}</span>
+
+		>> parent component class: employee-list.component.ts
+			>> write method to find the count
+			
+			getTotalEmployeesCount(){
+				return this.employees3.length;
+			}
+
+			getTotalMaleEmployeesCount(){
+				return this.employees3.filter(e=>e.gender==="Male").length;
+			}
+
+			getTotalFemaleEmployeesCount(){
+				return this.employees3.filter(e=>e.gender==="Female").length;
+			}
+		
+		>> parent component HTML: employee-list.component.html
+			>> In parent component HTML, with in <app-employee-count> directive(child component reference)
+			>> Bind input property values using property binding
+			
+			<app-employee-count [all]="getTotalEmployeesCount()"
+								[male]="getTotalMaleEmployeesCount()"
+								[female]="getTotalFemaleEmployeesCount()"
+			></app-employee-count>
+
+			>> Now, the values will be available in input properties of child component
+			
+		Reference: http://csharp-video-tutorials.blogspot.com/2017/07/angular-component-input-properties.html
+		
+
+Angular component 0utput properties ( @Output() ) 
+-------------------------------------------------
+And Custom events using angular EventEmitter class
+-----------------------------------------------
+	Refer: http://csharp-video-tutorials.blogspot.com/2017/07/angular-component-output-properties.html
+
+	>> Use output property to pass user actions or user entered values or selections from the child component to the parent component.
+	>> To use output property, we have to import Output from '@angular/core'
+	>> Use "@Output()" decorator to Convert a child component properties to an output property
+		parent component: employee-list.component
+		child component: employee-count.component
+
+	Example:
+	>> In child component, 
+	>> Import Output and EventEmitter(for custom event) from '@angular/core'
+		import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+	
+		// Holds the selected value of the radio button
+		selectedRadioButtonValue = 'All';
+  
+	  // The Output decorator makes the property an Output property
+	  // EventEmitter class is used to create the custom event
+	  // When the radio button selection changes, the selected
+	  // radio button value which is a string gets passed to the
+	  // event handler method. Hence, the event payload is string.
+	   @Output()
+	   countRadioButtonSelectionChanged: EventEmitter<string>= new EventEmitter<string>();   
+	  
+	  // This method raises the custom event. 
+	  // We will bind this method to the change event of all the 3 radio buttons
+		onRadioButtonSelectionChange(){
+			this.countRadioButtonSelectionChanged.emit(this.selectedRadioButtonValue);
+		}
+	
+	>> In child component HTML view
+		>> Value attribute is set to (All, Male or Female)
+		>> The 2 way data-binding using the ngModel ensures whenever the radio button selection changes, 
+		   the "selectedRadioButtonValue" property is updated with the value of the selected radio button.
+		>> onRadioButtonSelectionChange() method is binded to "change" event of the radio button. 
+		>> This means whenever, the selection of the radio button changes, onRadioButtonSelectionChange() method 
+			raises the custom event "countRadioButtonSelectionChanged". 
+		
+		<input type="radio" name="options" value="All" 
+											[(ngModel)]="selectedRadioButtonValue" 
+											(change)="onRadioButtonSelectionChange()"/>
+		<span class="radioClass">All({{all}})</span>
+
+		<input type="radio" name="options" value="Male" 
+											[(ngModel)]="selectedRadioButtonValue" 
+											(change)="onRadioButtonSelectionChange()"/>
+		<span class="radioClass">{{'Male(' + male + ')'}}</span>
+
+		<input type="radio" name="options" value="Female" 
+											[(ngModel)]="selectedRadioButtonValue" 
+											(change)="onRadioButtonSelectionChange()" />
+		<span class="radioClass">{{'Female(' + female + ')'}}</span>
+		
+	>> In parent component (employee-list.component.ts)
+		>> A property to keep track of which radio button is selected
+		>> We have set the default value to All, so all the employees are displayed in the table by default
+		
+		selectedEmployeeCountRadioButton="All"
+		
+		>> Method to call, when the custom event(countRadioButtonSelectionChanged) inside the child component(Employee-count.component) is raised
+		>> The event binding is specified in employee-list.component.html	
+		>> This is the Event handler method
+	
+		onEmployeeCountRadioButtonChange(selectedRadioButtonValue){
+			this.selectedEmployeeCountRadioButton=selectedRadioButtonValue;
+		}
+		
+	>> In parent html employee-list.component.html
+		<app-employee-count [all]="getTotalEmployeesCount()"
+                    [male]="getTotalMaleEmployeesCount()"
+                    [female]="getTotalFemaleEmployeesCount()"
+                    (countRadioButtonSelectionChanged)="onEmployeeCountRadioButtonChange($event)"
+					
+					
+	>> <ng-container>
+		>> In parent html employee-list.component.html
+		Example:
+			<ng-container *ngFor="let employee of employees3" >
+			 <tr *ngIf="selectedEmployeeCountRadioButton=='All' || selectedEmployeeCountRadioButton==employee.gender">
+		
+		>> In angular, Multiple structural directives(*ngFor, *ngIf) are not allowed in one html element
+		>> To avoid this issue we used <ng-container> element and the "ngFor" directive is placed on this element.
+		
+		
+<ng-container>
+------------------
+	>> In angular, Multiple structural directives(like *ngFor, *ngIf) are not allowed in one html element
+	>> To avoid this issue we used <ng-container> element
+	>> To avoid this issue we used <ng-container> element and the "ngFor" directive is placed on this element.
+	
+	Example:
+		<ng-container *ngFor="let employee of employees3" >
+			 <tr *ngIf="selectedEmployeeCountRadioButton=='All' || selectedEmployeeCountRadioButton==employee.gender">
+		
+	>> To avoid this issue we used <ng-container> element and the "ngFor" directive is placed on this element.
+	
+	
