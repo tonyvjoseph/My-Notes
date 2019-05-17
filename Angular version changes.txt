@@ -1,0 +1,42 @@
+
+
+rxjs changes:
+
+https://www.academind.com/learn/javascript/rxjs-6-what-changed/
+
+
+# Observable, Subject etc.
+
+import { Observable } from 'rxjs/Observable'
+import { Subject } from 'rxjs/Subject'
+becomes
+import { Observable, Subject } from 'rxjs'
+
+
+# Operators
+import 'rxjs/add/operator/map'
+import 'rxjs/add/operator/take'
+becomes
+import { map, take } from 'rxjs/operators'
+
+
+# Methods to Create Observables
+import 'rxjs/add/observable/of'
+// or
+import { of } from 'rxjs/observable/of'
+becomes
+import { of } from 'rxjs'
+
+---------------------------
+
+The following operators were renamed
+catch()   => catchError()
+do() 	  => tap()
+finally() => finalize()
+switch()  => switchAll()
+
+Additionally, some Observable-creation methods were renamed/ refactored:
+
+throw()   => throwError()
+fromPromise() => from() (this automatically detects the type)
+

@@ -65,7 +65,8 @@ Solution:
 04. now you can do "ng-serve" to start your angular app at the same port 4200
 
 ==========================================================================
-
+Create NEw Component:
+---------------------
 ng generate component my-new-component
 OR
 ng g component my-new-component
@@ -82,8 +83,18 @@ Create New Folder and Component:
 02. generate new component. It will create a new folder also
 Ex: ng g c employee   //This will create employee component inside employee folder.
 
+Create a component WithOut create a New Folder:
+	ng g component plainsight/new-component-name --flat
+	OR
+01. Right Click on the existing folder and open a new Terminal and 
+02. generate new component using below code.
+	ng g component new-component-name --flat
+	
+	Reference: https://angular.io/cli/generate
+	
 Create New Class:
-g generate class <name> [options]
+-----------------
+ng generate class <name> [options]
 OR
 ng g class <name> [options]
 OR
@@ -95,9 +106,15 @@ ng generate class <name> --skipTests=true|false
 
 Ex:
 	ng generate class foo
+	>> It will create a class "foo.ts" and a test file "foo.spec.ts"
+	
+	ng generate class foo --skipTests=true
 	>> It will create a class "foo.ts"
 	
 	ng generate class foo --type=bar
 	>> It will create a class "foo.bar.ts"
 	
-	
+New Interface:
+--------------
+	ng g interface Employee --skipTests=true
+	>> It will create a interface "Employee.ts"

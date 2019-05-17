@@ -619,4 +619,303 @@ And Custom events using angular EventEmitter class
 		
 	>> To avoid this issue we used <ng-container> element and the "ngFor" directive is placed on this element.
 	
+
+Interfaces in Angular
+----------------------
+	>> We can use interface in typescript to create our business object(like Employee object).
+	>> Example:
+		export interface IEmployee {
+			code: string;
+			name: string;
+			gender: string;
+			annualSalary: number;
+			dateOfBirth: string;
+		}
+		
+	>> Creating Employee object using interface
+		employees4: IEmployee[];
 	
+	>> Normally we can create an Employee object like below
+		employees1: any[];
+		
+	>> To use interface, we have to import interface to the class
+	>> Example:
+		import { IEmployee } from '../employee';
+		
+	>> Interface members are public by default and does not require explicit access modifiers.
+	>> A class that implements an interface must provide implementation for all the interface members 
+	   unless the members are marked as optional using the ? operator
+	>> TypeScript interfaces exist for developer convenience and are not used by Angular at runtime.
+	>> During transpilation, no JavaScript code is generated for an interface. 
+	>> It is only used by Typescript for type checking during development.
+	
+		
+Angular component lifecycle hooks
+---------------------------------
+
+ngOnChanges:
+	>> Executes, every time the value of an input property changes. 
+	>> The hook method receives a "SimpleChanges" object containing current and previous property values. 
+	>> This is called before ngOnInit
+	
+ngOnInit:
+	>> Executes after the constructor and after ngOnChange hook for the first time. 
+	>> It is most commonly used for component initialisation and retrieving data from a database
+	
+ngOnDestroy:
+	>> Executes just before angular destroys the component and generally used for performing cleanup
+	
+There are 3 simple steps to use the Life Cycle Hooks:
+	>> Step 1 : Import the Life Cycle Hook interface. 
+				For example, to use ngOnInit() life cycle hook, import OnInit interface.
+				And Import OnChanges, SimpleChanges to use ngOnChanges()
+		
+			import { OnInit, OnChanges, SimpleChanges } from '@angular/core';
+			
+	>> Step 2 : Make the component class implement the Life Cycle Hook interface, using the implements keyword as shown below. 
+	
+			export class OthersComponent implements OnInit, OnChanges { }
+			
+	>> Step 3 : Write the implementation code for the life cycle interface method. 
+				Each interface has a single hook method whose name is the interface name prefixed with ng.
+				
+				ngOnInit() {
+				}
+				
+				ngOnChanges(changes:SimpleChanges){
+					for(let propertyName in changes){
+					  let change=changes[propertyName];
+					  let currentValue=JSON.stringify(change.currentValue);
+					  let previousValue=JSON.stringify(change.previousValue);
+
+					  console.log('CurrentValue: '+currentValue+', PreviousValue: '+ previousValue);
+					}
+			    }
+
+
+Angular services tutorial
+--------------------------
+	>> Service in angular is a type script class
+	>> To create a service we have to import Injectable from angular core
+		import { Injectable } from '@angular/core';
+		
+	>> ALso we have to decorate export class with @Injectable()
+		@Injectable()
+		export class EmployeeService { }
+		
+	>> To consume the service in component class, we have to import the service
+		import{EmployeeService} from '../employee-service';
+		
+	>> Also we have to Register EmployeeService in this component by declaring it in the providers array
+	>> Register our service with angular dependency injection system using providers
+	
+		Component which consume service: employee-list.component.ts
+	
+		@Component({
+			  selector: 'app-employee-list',
+			  templateUrl: './employee-list.component.html',
+			  styleUrls: ['./employee-list.component.css'],
+			  //// we have to register our service with angular dependency injection system
+			  //// Here we have to provide our service class. We can register more than one service.
+			  //// Register EmployeeService in this component by declaring it in the providers array
+			  providers: [EmployeeService]
+		})
+		
+		
+	>> Inject EmployeeService using the constructor
+	
+			constructor(private _employeeService: EmployeeService) {
+				}
+			
+	>> The private variable _employeeService which points to
+	   EmployeeService singelton instance is then available throughout this class
+
+	>> ngOnInit() life cycle hook call the getEmployees() service method of EmployeeService 
+	>> using the private variable _employeeService
+			
+			ngOnInit() {
+				this.employees = this._employeeService.getEmployees();
+			}
+	
+	>> the dependency injection is done using the class constructor and 
+		the actual service method call is issued from ngOnInit life cycle hook as shown below
+		
+		employees:IEmployee[];
+		constructor(private _employeeService: EmployeeService) { }
+
+		ngOnInit() {
+			this.employees = this._employeeService.getEmployees();
+		}
+	
+	Difference between constructor and ngOnInit 
+	-------------------------------------------
+	>> A class constructor is automatically called when an instance of the class is created. 
+		It is generally used to initialise the fields of the class and it's sub classes. 
+
+	>> ngOnInit is a life cycle hook method provided by Angular. 
+		ngOnInit is called after the constructor and is generally used to perform tasks related to Angular bindings. 
+		For example, ngOnInit is the right place to call a service method to fetch data from a remote server
+
+
+Angular and ASP.NET Web API
+---------------------------
+
+	>> Refer my WebApi study app 
+	>> \EmployeeController.cs is the api controller which is used by the angular app
+	>> service urls are
+			http://localhost:50101/api/employee/GetEmployeeList
+			http://localhost:50101/api/employee/GetEmployee/emp103
+		
+	
+Angular 2 http service tutorial (Web API call from angular app)
+--------------------------------------------------------------
+
+Step-1: Import HttpClientModule
+--------
+	>> Angular using the Angular builtin http service to call the Web API service 
+	>> Angular builtin http service is present in angular HttpClientModule.(from Angular-4 onwards. For old versions it was HttpModule)
+	>> Import the angular HttpClientModule to root application module ('app.module.ts') from '@angular/common/http'
+		Root module: app.module.ts
+		
+		import { HttpClientModule } from '@angular/common/http';
+	
+	>> Also include HttpClientModule in the imports array of the NgModule() decorator
+		@NgModule({
+			imports: [
+				BrowserModule,
+				FormsModule,
+				HttpClientModule],
+			declarations: [
+
+Step-2: Modify angular EmployeeService to issue any HTTP request
+---------
+	File: employee-service.ts
+	
+	>> Modify angular EmployeeService to issue any HTTP request using the builtin http service 
+	>> Import HttpClient from '@angular/common/http';
+		
+		import { HttpClient } from '@angular/common/http';
+		
+	>> Use the EmployeeService class constructor to inject Angular Http service(HttpClient). 
+		
+		constructor(private _httpClient:HttpClient){}
+	
+	>> The injected HttpClient service can then be used anywhere in this class to call a web service over http. 
+	>> Since this Angular EmployeeService class has an injected dependency, @Injectable() decorator is required on this class. 
+	>> If there are no injectable dependencies then we may omit the @Injectable() decorator
+		
+		@Injectable()
+		export class EmployeeService {
+			constructor(private _httpClient:HttpClient){}
+			}
+			
+step-3: Make the service call and method as Observable
+---------------------------------------
+	File: employee-service.ts
+	
+	>> From getEmployees() method, Call the web api service by providing the url
+	>> We are using the get() method of the angular http service to issue a get request over http.
+		
+		return this._httpClient.get("http://localhost:50101/api/employee/GetEmployeeList");
+		
+	>> This http get() method return Observable<Response>.
+	>> So, we have to set the return type of getEmployees() method to Observable<IEmployee[]> 
+	>> To make the method as Observable we have to import Observable
+	>> Import Observable from 'rxjs'. (For old versions import from 'rxjs/Observable')
+	
+		import { Observable } from 'rxjs';
+	
+		getEmployees(): Observable<IEmployee[]>{
+			return this._httpClient.get("http://localhost:50101/api/employee/GetEmployeeList");
+		}
+	
+	>> Now, the return type of getEmployees() method is  Observable IEmployee array.
+	>> So, we need to convert the response of the service call ( get() is Observable by default) also to Observable IEmployee array.
+	*****************Following map is not using now. Instead of that we are converting the response to <IEmployee[]>****************
+	>> We are using  map operator provided by rxjs to convert the service call response to Observable IEmployee array.
+	>> Import map operator provided by rxjs. (for old version: import 'rxjs/add/operator/map';)
+		
+		import { map } from 'rxjs/operators';
+	*********************************************************************************************************************************		
+	
+	>> Converting the service response to IEmployee array.
+	
+		return this._httpClient.get<IEmployee[]>("http://localhost:50101/api/employee/GetEmployeeList");
+	
+	>> Finally the 	service code of "employee-service.ts"
+	
+		import { Injectable } from '@angular/core';
+		import { IEmployee } from './employee';
+		//// Import HttpClient to issue any HTTP request using the builtin http service 
+		import { HttpClient } from '@angular/common/http';
+		import { Observable } from 'rxjs';
+	
+		@Injectable()
+		export class EmployeeService {
+			constructor(private _httpClient:HttpClient){}
+
+			getEmployees(): Observable<IEmployee[]>{
+				return this._httpClient.get<IEmployee[]>("http://localhost:50101/api/employee/GetEmployeeList");
+			}
+		}
+		
+Step 4 - Subscribe to the Observable returned by angular EmployeeService 		
+-----------
+	File: employee-list.component.ts
+	
+	>> Corresponding changes is required on angular service consume place ie. 'employee-list.component.ts'
+	>> We cannot bind Observable IEmployee(getEmployees() method) directly to employee object
+	>> In the ngOnInit() method of "employeeList.component.ts" use the subscribe method
+	>> We cant bind Observable of IEmployee(getEmployees() method) directly to the IEmployee array object employees5
+	>> To assign we have to subscribe to Observable.
+	
+		ngOnInit() {
+			////this.employees5=this._emplyoeeService.getEmployees();
+			this._emplyoeeService.getEmployees()
+								.subscribe(employeeData=>this.employees5=employeeData);
+		}
+		
+	>> Above we also specified call back method as a parametr to the subscribe method as a arrow function
+    >> Here employeeData receives the employees list and assign to the employees5.
+	>> subscribe() function we are passing an arrow function as a parameter. 
+	>> This arrow function is called when the Observable emits an item. 
+	>> In our case the Observable emits an array of IEmployee objects. 
+	>> employeesData parameter receives the array of IEmployee objects, which we are then using to initialise "employees5" property of the EmployeeListComponent class.
+	
+What is an Observable??
+------------------------
+	>> Observable is an asynchronous pattern. 
+	>> In the Observable pattern we have an Observable and an Observer. Observer observes the Observable. 
+	>> In many implementations an Observer is also called as a Subscriber.
+	>> An Observable can have many Observers (also called Subscribers).
+	>> Observable emits items or notifications over time to which an Observer (also called Subscriber) can subscribe.
+	>> When a subscriber subscribes to an Observable, the subscriber also specifies a callback function.
+	>> This subscriber callback function is notified as and when the Observable emits items or notifications.
+	>> Within this callback function we write code to handle data itmes or notifications received from the Observable.
+	
+	
+	>> In above example we are getting the employee list from web api service call
+	>> The Web API call to retrieve employee list is in ngOnInit().
+	>> Before the service call can initialise "employees5" property, If we try to access length property of "employees5"
+	>> "employees5" property is still undefined at that point, so we get the error - Cannot read property 'length' of undefined. 
+	>> To fix this error use angular structural directive *ngIf as shown below.
+	>> This will delay the "employees5.length" binding until "employees" property is initialised. 
+	
+		File: employee-list.component.ts
+				getEmployeesCountFromWebAPI(){
+					return this.employees5.length;
+				}
+				
+		File: employee-list.component.html
+				<span style="font-weight: bold" *ngIf="employees5">{{getEmployeesCountFromWebAPI()}}</span>
+	
+	>> This <span> will bind only if "employees5" is exist or having value.
+	
+	
+	
+
+
+
+
+
+

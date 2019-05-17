@@ -1,0 +1,28 @@
+
+17-May-2019
+------------
+
+D:\MyLearningApps\angular-first-app\src\app\employee\employee-service.ts :DONE
+D:\MyLearningApps\angular-first-app\src\app\employee\employee-list\employee-list.component.ts	:DONE
+D:\MyLearningApps\angular-first-app\src\app\employee\employee-list\employee-list.component.html :DONE
+D:\MyLearningApps\angular-first-app\src\app\employee\employee-list\employee-list.component.css	:DONE
+
+
+
+
+
+
+15-May-2019
+----------
+Angular:
+D:\MyLearningApps\angular-first-app\src\app\employee\employee-service.ts :DONE
+D:\MyLearningApps\angular-first-app\src\app\employee\employee.ts  :DONE
+D:\MyLearningApps\angular-first-app\src\app\employee\employee-list\employee-list.component.ts	:DONE
+D:\MyLearningApps\angular-first-app\src\app\employee\employee-list\employee-list.component.html  :DONE
+D:\MyLearningApps\angular-first-app\src\app\app.module.ts
+
+
+WebApi:
+D:\MyLearningApps\WebApi\WebApi\Controllers\EmployeeController.cs : Done
+D:\MyLearningApps\WebApi\WebApi\Models\EmployeeAngularModel.cs  : Done
+
