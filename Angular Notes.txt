@@ -912,10 +912,43 @@ What is an Observable??
 	>> This <span> will bind only if "employees5" is exist or having value.
 	
 	
+Angular 2 http error handling
+------------------------------
+	File: employee-service.ts
 	
+	>> We use the 'catchError' operator to catch any exceptions that occur. 
+	>> For that we have to import it
+	
+		import { map, catchError } from 'rxjs/operators';
+	
+	>> Add the catchError operator along with http get call
+	
+		getEmployees(): Observable<IEmployee[]>{
+			return this._httpClient.get<IEmployee[]>("http://localhost:50101/api/employee/GetEmployeeList")
+									.pipe(
+										catchError(this.handleError)
+									);
+		}
+		
+		handleError(errorResponse:Response){
+			console.error(errorResponse);
+			return Observable.throw(errorResponse);
+		}
+	>>  After we log the error, we are throwing the error back, 
+	>> so the components that use this service are notified about the error condition, 
+	>> so they can display a meaningful error message to the user.
+	
+	Pipes(): function in RxJS
+	-----------------------------
+	You can use pipes to link operators together. 
+	Pipes let you combine multiple functions into a single function. 
+	The pipe() function takes as its arguments the functions you want to combine, 
+	and returns a new function that, when executed, runs the composed functions in sequence.
 
 
-
+	File: employee-list.component.ts
+	
+	
 
 
 
