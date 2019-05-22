@@ -922,7 +922,9 @@ Angular 2 http error handling
 		import { map, catchError } from 'rxjs/operators';
 	
 	>> Add the catchError operator along with http get call
-	
+	>> To the catch operator we are passing another method (handleError). 
+	>> This handleError() method is called when there is an exception.
+
 		getEmployees(): Observable<IEmployee[]>{
 			return this._httpClient.get<IEmployee[]>("http://localhost:50101/api/employee/GetEmployeeList")
 									.pipe(
@@ -934,7 +936,8 @@ Angular 2 http error handling
 			console.error(errorResponse);
 			return Observable.throw(errorResponse);
 		}
-	>>  After we log the error, we are throwing the error back, 
+		
+	>> After we log the error, we are throwing the error back, 
 	>> so the components that use this service are notified about the error condition, 
 	>> so they can display a meaningful error message to the user.
 	
@@ -945,10 +948,95 @@ Angular 2 http error handling
 	The pipe() function takes as its arguments the functions you want to combine, 
 	and returns a new function that, when executed, runs the composed functions in sequence.
 
-
 	File: employee-list.component.ts
 	
+	>> We are calling this service from EmployeeListComponent. 
+	>> So we need to handle the error we have thrown from the service and display a meaningful message to the user. 
+	>> An arrow function is called when the Observable successfully emits an item. 
+	>> We have to create another arrow function to handle error, when there is an error. 
+		
+		errorMessage:string='Loading data, please wait...';
+		
+		this._emplyoeeService.getEmployees()
+                            .subscribe(
+                                employeeData=>this.employees5=employeeData,
+                                error=>{
+                                    this.errorMessage='Problem with the service. Please try again after sometime';
+                                });
+
+								
+Using Bootstrap with Angular 2
+--------------------------------
+	>> We will be using Bootstrap for styling. 
+	>> Go to project folder and Install bootstrap using the following NPM command
+		
+		npm install bootstrap@3 jquery --save
 	
+	>> In Angular CLI configuration file include the path to the Bootstrap CSS file in the styles array. 
+	>> Remember in Angular 6, the Angular CLI configuration file is renamed to angular.json
+	
+		"styles": [
+				"src/styles.css",
+				"node_modules/bootstrap/dist/css/bootstrap.min.css"
+			]
+	
+	>> Bootstrap relies on jQuery for some of it's features. 
+	>> Include the path to jQuery and Bootstrap jQuery files in the scripts array in angular.json file. 
+	
+		"scripts": [
+			  "node_modules/jquery/dist/jquery.min.js",
+			  "node_modules/bootstrap/dist/js/bootstrap.min.js"
+			]
+	
+Angular 2 routing tutorial
+-----------------------------
+	>> Routing allows users to navigate from one view to another view. 
+	>> Let's create another simple HomeComponent so we can see how to navigate from HomeComponent to EmployeeListComponent and vice-versa
+	>> If the user tries to navigate to a route that does not exist, we want to route the user to PageNotFoundComponent. So let's create this component as well.
+	
+steps to implement routing in Angular 2 applications. 
+--------------------------------------------
+	Step 1 : Set <base href> in the application host page which is index.html. 
+			 The <base href> tells the angular router how to compose navigation URLs. 
+			 <base href="/">
+	Step-2 : Create a separate routing module 
+		>> Create app-routing.module.ts if its not created and import in app-module.ts
+	Step-3: configure the application routes
+		>> Import the Angular RouterModule into the AppRoutingModule and configure the application routes
+	
+		File: app-routing.module.ts
+	
+		import { HomeComponent } from './home/home.component';
+		import { AppComponent } from './app.component';
+		import { EmployeeListComponent } from './employee/employee-list/employee-list.component';
+		import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
+		const routes: Routes = [
+		  { path: 'home', component: HomeComponent },
+		  { path: 'app', component: AppComponent },
+		  { path: 'employees', component: EmployeeListComponent },
+		  { path: '', redirectTo: '/home', pathMatch: 'full' },
+		  { path: '**', component: PageNotFoundComponent }
 
+		];
 
+		@NgModule({
+		  imports: [RouterModule.forRoot(routes)],
+		  exports: [RouterModule]
+		})
+		
+	Step 4 : In the application root component file (app.component.html), create the navigation menu
+		
+		<div class="container">
+		  <nav class="navbar navbar-default">
+			  <ul class="nav navbar-nav">
+				  <li>
+					  <a routerLinkActive="active" routerLink="home">Home</a>
+				  </li>
+				  <li>
+					  <a routerLinkActive="active" routerLink="employees">Employees</a>
+				  </li>
+			  </ul>
+		  </nav>
+		  <router-outlet></router-outlet>
+		</div>
