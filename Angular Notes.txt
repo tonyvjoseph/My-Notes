@@ -974,7 +974,9 @@ Using Bootstrap with Angular 2
 	
 	>> In Angular CLI configuration file include the path to the Bootstrap CSS file in the styles array. 
 	>> Remember in Angular 6, the Angular CLI configuration file is renamed to angular.json
-	
+		
+		File: angular.json
+		
 		"styles": [
 				"src/styles.css",
 				"node_modules/bootstrap/dist/css/bootstrap.min.css"
@@ -997,27 +999,27 @@ Angular 2 routing tutorial
 steps to implement routing in Angular 2 applications. 
 --------------------------------------------
 	Step 1 : Set <base href> in the application host page which is index.html. 
-			 The <base href> tells the angular router how to compose navigation URLs. 
-			 <base href="/">
+			 >> The <base href> tells the angular router how to compose navigation URLs. 
+				<base href="/">
 	Step-2 : Create a separate routing module 
-		>> Create app-routing.module.ts if its not created and import in app-module.ts
+			>> Create app-routing.module.ts if its not created and import in app-module.ts
 	Step-3: configure the application routes
 		>> Import the Angular RouterModule into the AppRoutingModule and configure the application routes
-	
-		File: app-routing.module.ts
+			
+		File: app-routing.module.ts	
+		
+		import { NgModule } from '@angular/core';
+		import { Routes, RouterModule } from '@angular/router';
 	
 		import { HomeComponent } from './home/home.component';
-		import { AppComponent } from './app.component';
 		import { EmployeeListComponent } from './employee/employee-list/employee-list.component';
 		import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 		const routes: Routes = [
-		  { path: 'home', component: HomeComponent },
-		  { path: 'app', component: AppComponent },
-		  { path: 'employees', component: EmployeeListComponent },
-		  { path: '', redirectTo: '/home', pathMatch: 'full' },
-		  { path: '**', component: PageNotFoundComponent }
-
+			{ path: 'home', component: HomeComponent },
+			{ path: 'employees', component: EmployeeListComponent },
+			{ path: '', redirectTo: '/home', pathMatch: 'full' },
+			{ path: '**', component: PageNotFoundComponent }
 		];
 
 		@NgModule({
@@ -1040,3 +1042,139 @@ steps to implement routing in Angular 2 applications.
 		  </nav>
 		  <router-outlet></router-outlet>
 		</div>
+		
+		
+		
+Angular 2 route parameters
+-------------------------
+	>> passing parameters to routes in Angular.
+	>> When we click on an Employee code, we want to redirect the user to Employee View Component which displays that specific employee details. 
+	>> In the URL we will pass the Employee code as a parameter.(http://localhost/employees/emp101).
+	
+	File: app-routing.module.ts	
+	
+	>> Import the Employee View Component to app-routing.module.ts	
+			import { EmployeeViewComponent } from './employee/employee-view/employee-view.component';
+			
+	Step-1: 
+		>> Create the route with a parameter
+		>> Include the new parameter route to Routes array in app-routing.module.ts	
+	
+		const routes: Routes = [
+		  { .... },
+		  { .... },
+		  { path: 'employees/:code', component: EmployeeViewComponent },
+		  {..... },
+		  { .... }
+		];
+		
+		
+		import { EmployeeViewComponent } from './employee/employee-view/employee-view.component';
+
+		const routes: Routes = [
+		  { path: 'home', component: HomeComponent },
+		  { path: 'employees', component: EmployeeListComponent },
+		  { path: 'employees/:code', component: EmployeeViewComponent },
+		  { path: '', redirectTo: '/home', pathMatch: 'full' },
+		  { path: '**', component: PageNotFoundComponent }
+		];
+		
+	
+	Step-2: 
+		File: employee-list.component.html
+		
+		>> Bind to the route using [routerLink] directive
+		>> In the binding we are using link parameters array
+		>> Modify the <td> element that displays employee code to bind it to the route we created above using the routerLink directive as shown below.  
+		
+			<td>
+                <a [routerLink]="['/employees', employee.code]">
+                    {{employee.code | uppercase}}
+                </a>
+            </td>
+		
+		>> Explanation of the above code:
+			Notice in this example we are binding routerLink directive to an array.
+			This array is called link parameters array.
+			The first element in the array is the path of the route to the destination component.
+			The second element in the array is the route parameter, in our case the employee code.
+			
+			
+	Step-3: 
+		File: employee-service.ts
+		
+		>> Create a new service method in "employee-service.ts" to call the Web API service to return an employee by passing employee code as parameter.
+		
+			 getEmployeeByCode(empCode:string):Observable<IEmployee>{
+				//// Converting the service response to IEmployee
+				return this._httpClient.get<IEmployee>("http://localhost:50101/api/employee/GetEmployee" + empCode)
+										.pipe(
+											catchError(this.handleError)
+										);
+			}
+			
+	Step-4:
+		
+		File: employee-view.component.html
+		
+		>> Modify the "employee-view.component.html" to bind the employee details
+		
+	Step-5:
+		File: employee-view.component.ts
+		
+		>> Call angular service from "employee-view.component.ts" to bind the employee details
+		>> To retrieve the parameter from the URL we are using the "ActivatedRoute" service provided by Angular 
+		>> Import ActivatedRoute
+		
+			import { ActivatedRoute } from '@angular/router';
+			
+		>> Also import employee service to do service call
+			import{EmployeeService} from '../employee-service';
+		
+		>> We have to register EmployeeService using "provider" in 'employee-view.component.ts' to use it
+		>> THis EmployeeService is already register in 'employee-list.component.ts' 
+		>> So its not good to register same service in all classes. Its not singlton.
+		>> Instead that we can register this service in 'app.module.ts' and it will be available every where
+			
+			File: 'app.module.ts
+				
+			providers: [EmployeeService],
+		
+		>> Create an instance of EmployeeService and ActivatedRoute using dependency injection by adding it in constructor.
+			
+			constructor(private _employeeService: EmployeeService, private _activatedRoute: ActivatedRoute) { }
+			
+		>> Since ActivatedRoute is provided as a service inject it into the constructor just like how we have injected EmployeeService
+		
+		>> Write the code to retrieve out parameter value (ie code) inside  ngOnInit() 
+		>> We are using 'ActivatedRoute' service to retrieve out parameter value(parameter from the URL)
+		>> We are using snapshot approach to retrieve the value
+			
+			ngOnInit() {
+				let empCode:string= this._activatedRoute.snapshot.params['code'];
+			  }
+		
+		>> The name 'code' should be the same name that we given in the route configuration (app-routing.module.ts :  'employees/:code'	)
+		>> Call service method from employee-service
+			
+			employee:IEmployee;
+			statusMessage:string = "Loading data, please wait.";
+  
+			this._employeeService.getEmployeeByCode(empCode)
+					.subscribe(
+						employeeData => {
+						  if(employeeData==null){
+							this.statusMessage="Employee with the specified Employee Code does not exist";
+						  }
+						  else{
+							this.employee=employeeData;
+						  }
+						},
+						error => {
+						  this.statusMessage="Problem with service, try after sometime";
+						  console.log(error);
+						}
+			)
+			
+		>> Here we also checking the return data is null or not
+			
