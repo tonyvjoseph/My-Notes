@@ -1045,7 +1045,7 @@ steps to implement routing in Angular 2 applications.
 		
 		
 		
-Angular 2 route parameters
+Angular 2 route parameters (WebAPI call with parameter)
 -------------------------
 	>> passing parameters to routes in Angular.
 	>> When we click on an Employee code, we want to redirect the user to Employee View Component which displays that specific employee details. 
@@ -1083,7 +1083,7 @@ Angular 2 route parameters
 	Step-2: 
 		File: employee-list.component.html
 		
-		>> Bind to the route using [routerLink] directive
+		>> Bind employee Code to the route using [routerLink] directive
 		>> In the binding we are using link parameters array
 		>> Modify the <td> element that displays employee code to bind it to the route we created above using the routerLink directive as shown below.  
 		
@@ -1124,7 +1124,7 @@ Angular 2 route parameters
 		
 		>> Call angular service from "employee-view.component.ts" to bind the employee details
 		>> To retrieve the parameter from the URL we are using the "ActivatedRoute" service provided by Angular 
-		>> Import ActivatedRoute
+		>> Import ActivatedRoute to  "employee-view.component.ts" 
 		
 			import { ActivatedRoute } from '@angular/router';
 			
@@ -1133,7 +1133,7 @@ Angular 2 route parameters
 		
 		>> We have to register EmployeeService using "provider" in 'employee-view.component.ts' to use it
 		>> THis EmployeeService is already register in 'employee-list.component.ts' 
-		>> So its not good to register same service in all classes. Its not singlton.
+		>> So its not good to register same service in all classes. Then Its not singleton.
 		>> Instead that we can register this service in 'app.module.ts' and it will be available every where
 			
 			File: 'app.module.ts
@@ -1144,7 +1144,7 @@ Angular 2 route parameters
 			
 			constructor(private _employeeService: EmployeeService, private _activatedRoute: ActivatedRoute) { }
 			
-		>> Since ActivatedRoute is provided as a service inject it into the constructor just like how we have injected EmployeeService
+		>> Since ActivatedRoute is provided as a service, inject it into the constructor just like how we have injected EmployeeService
 		
 		>> Write the code to retrieve out parameter value (ie code) inside  ngOnInit() 
 		>> We are using 'ActivatedRoute' service to retrieve out parameter value(parameter from the URL)
@@ -1155,26 +1155,34 @@ Angular 2 route parameters
 			  }
 		
 		>> The name 'code' should be the same name that we given in the route configuration (app-routing.module.ts :  'employees/:code'	)
-		>> Call service method from employee-service
+		>> Call the service method which is in employee-service 
 			
 			employee:IEmployee;
 			statusMessage:string = "Loading data, please wait.";
-  
-			this._employeeService.getEmployeeByCode(empCode)
-					.subscribe(
-						employeeData => {
-						  if(employeeData==null){
-							this.statusMessage="Employee with the specified Employee Code does not exist";
-						  }
-						  else{
-							this.employee=employeeData;
-						  }
-						},
-						error => {
-						  this.statusMessage="Problem with service, try after sometime";
-						  console.log(error);
-						}
-			)
 			
-		>> Here we also checking the return data is null or not
+			constructor(private _employeeService: EmployeeService, 
+						private _activatedRoute: ActivatedRoute) { }
+			
+			ngOnInit() {
+    
+				let empCode:string = this._activatedRoute.snapshot.params['code'];
+			 
+				this._employeeService.getEmployeeByCode(empCode)
+						.subscribe(
+							employeeData => {
+							  if(employeeData==null){
+								this.statusMessage="Employee with the specified Employee Code does not exist";
+							  }
+							  else{
+								this.employee=employeeData;
+							  }
+							},
+							error => {
+							  this.statusMessage="Problem with service, try after sometime";
+							  console.log(error);
+							}
+				)
+			}
+			
+		>> Here we also checking the return data is null or not and display proper messages
 			
