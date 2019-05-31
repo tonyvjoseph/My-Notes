@@ -1046,7 +1046,7 @@ steps to implement routing in Angular 2 applications.
 		
 		
 Angular 2 route parameters (WebAPI call with parameter)
--------------------------
+-------------------------  ----------------------------
 	>> passing parameters to routes in Angular.
 	>> When we click on an Employee code, we want to redirect the user to Employee View Component which displays that specific employee details. 
 	>> In the URL we will pass the Employee code as a parameter.(http://localhost/employees/emp101).
@@ -1185,4 +1185,61 @@ Angular 2 route parameters (WebAPI call with parameter)
 			}
 			
 		>> Here we also checking the return data is null or not and display proper messages
-			
+
+
+Angular dependency injection
+----------------------------
+
+	Example File: employee-view.component.ts
+		
+		export class EmployeeViewComponent implements OnInit {
+
+			constructor(private _employeeService: EmployeeService, 
+					    private _activatedRoute: ActivatedRoute) { }
+
+	
+		>> When an instance of EmployeeListComponent is created, the "Angular Injector" creates an instance of the EmployeeService class 
+		>> And provides it to the EmployeeListComponent constructor.
+		>> The constructor then assigns that instance to the private field _employeeService.
+		>> We use this private field _employeeService to call the EmployeeService method getEmployees().
+
+		>> We have to register a service with "Angular Injector" to create an instance of the EmployeeService class 
+		>> To register a service with "Angular Injector" we use "Providers" property of @Component decorator or @NgModule decorator. 
+			Ex: In component
+					
+					@Component({
+					  selector: 'app-employee-view',
+					  templateUrl: './employee-view.component.html',
+					  styleUrls: ['./employee-view.component.css'],
+					  providers: [EmployeeService]
+					})
+					
+			Ex: In AppModule (app.module.ts)
+				
+					@NgModule({
+						....
+						providers: [EmployeeService],
+						....
+					})
+					
+		>> If we are registering a service using the providers property of the @Component decorator then we are registering the service with an angular injector at the component level. 
+		>> The service is then available to that component and all of it's children. 
+		>> If we register the service using the providers property of the @NgModule decorator then we are registering the service with an angular injector at the module level which is the root injector. 
+		>> The service registered with the root injector is then available to all the component across the entire application.
+		
+	What is Dependency Injection
+	----------------------------
+		>> It's a coding pattern in which a class receives its dependencies from an external source rather than creating them itself.  
+
+		>> So if we relate this definition to our example, EmployeeListComponent has a dependency on EmployeeService. 
+		   The EmployeeListComponent receives the dependency instance (i.e EmployeeService instance) from 
+		   the external source (i.e the angular injector) rather than creating the instance itself.
+	
+Why dependency injection
+------------------------
+	
+	
+		
+		
+		
+		
