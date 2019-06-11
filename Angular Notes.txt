@@ -1238,8 +1238,195 @@ Angular dependency injection
 Why dependency injection
 ------------------------
 	
+	>> Without Dependency Injection Example:
+	   -------------------------------------
 	
+			export class Computer {
+
+				private processor: Processor;
+
+				constructor() {
+					this.processor = new Processor();
+				}
+			}
+
+			export class Processor {
+
+				constructor() {
+				}
+			}
+		
+		>> Here, instance of the "Processor" class is created inside the computer class itself.
+		>> If any changes happens on "Processor" class we need to change "Computer" class also.
+		>> Also, the Processor class instance created in the Computer class is local to the Computer class and cannot be shared.
+		
+	>> With Dependency Injection Example:
+	   ----------------------------------
+	   
+			export class Computer {
+
+				private processor: Processor;
+
+				constructor(processor: Processor) {
+					this.processor = processor;
+				}
+			}
+
+			export class Processor {
+
+				constructor(speed: number) {
+				}
+			}
+		
+		
+		With Dependency Injection, the Computer class is not creating the instance of the Processor class itself. 
+		Instead we have specified that the Computer class has a dependency on Processor class using the constructor. 
+		Now, when we create an instance of the Computer class, an external source i.e the "Angular Injector" will provide the instance of the Processor class to the Computer class. 
+		Since now the "Angular injector" is creating the dependency instance, the Computer class need not change when the Processor class changes.
+		
+		we have a service called "UserPreferencesService" which keeps track of the user preferences like colour, font-size etc. 
+		We want this data to be shared with all the other components in our application. 
+		Now if we create an instance of this "UserPreferenceService" class in every component class like we did in the Computer class, 
+		    the service instance is local to the component in which we have created it and the data cannot be shared with other components. 
+		So if we need this "UserPreferencesService" in 10 different components, we end up creating 10 instances of the service, one for each component. 
+		
+
+		
+Angular Singleton Service
+-------------------------
+	>> One of the benefits of dependency injection is that it allows us to share data and functionality easily as the angular injector provides a Singleton 
+		i.e a single instance of the service. 
+	>> A single instance of the service which enables us to share data and functionality across multiple components in our application. 
+	
+	>> Create a simple UserPreferencesService
+		File: user-preferences-service.ts
+			
+			import { Injectable} from '@angular/core';
+
+			@Injectable()
+			export class UserPreferencesService {
+				colourPreference: string = 'orange';
+			}
+	>> Notice this service has a single property "colourPreference" which is defaulted to "orange". 
+	>> We want to retrieve and use this colour in both "HomeComponent" and "EmployeeListComponent". 	
+	>> Create a Singleton i.e a single instance of the UserPreferencesService and use that single instance 
+	   to share data (colourPreference property value) between the 2 components (HomeComponent & EmployeeListComponent) using dependency injection.
+	
+	>> Modify File: app.module.ts
+		>> Add reference to user-preferences-service.ts
+		>> Register the service using the Providers property of @NgModule() decorator in app.module.ts file 
+		
+				import { EmployeeService } from './employee/employee-service';
+				import { UserPreferencesService } from './user-preferences-service';
+				
+				  providers: [
+					EmployeeService,
+					UserPreferencesService],									
+				
+	>> Modify File: home.component.ts
+		>> Specify the dependency on UserPreferencesService using the constructor of HomeComponent 
+		
+			import { UserPreferencesService } from '../user-preferences-service';
+			
+			constructor(private _userPreferenceService:UserPreferencesService) { }
+
+		    get colour(): string {
+			   return this._userPreferenceService.colourPreference;
+		    }
+
+		    set colour(value: string) {
+			   this._userPreferenceService.colourPreference = value;
+		    }
+		
+	>> Modify File: home.component.html
+			<div>
+			  <h3>This is the home page</h3>
+			  <div>
+				  Colour Preference :
+				  <input type='text' [(ngModel)]='colour' [style.background]="colour"/>
+			  </div>
+			</div>>
+	
+	
+	>> Make same changes in employee-list.component.ts	
+	>> Modify File: employee-list.component.ts	
+	 
+			import { UserPreferencesService } from 'src/app/user-preferences-service';
+			
+			constructor(private _emplyoeeService:EmployeeService,
+                        _userPreferencesService:UserPreferencesService) { 
+						
+				
+			get colour(): string {
+				return this._userPreferencesService.colourPreference;
+			}
+			
+			set colour(value: string) {
+				this._userPreferencesService.colourPreference = value;
+			}
+			
+	>> Modify File: employee-list.component.html	
+	
+			<div>
+				Colour Preference :
+				<input type='text' [(ngModel)]='colour' [style.background]="colour"/>
+			</div>
+			
+	>> This singleton enables data sharing between both the components. 
+	>> That's how we are able to see the changes made by one component in the other component. 
+	
+	
+Angular Injector
+----------------
+
+	>> Angular injector is available at root level and each component level
+	>> If a service is registered with the root injector then that service is available for all components in our entire application including the components in lazy loaded modules. 
+	>> If a service is registered with the injector at the Application Root component level, then that service is available for all the components in the application except the components in lazy loaded modules.
+	>> If a service is registered with a specific component injector, then that service is available for that component and any of it's childre
+	
+	>> We can register a service with the angular injector using the providers property of @Component decorator or @NgModule decorator. 
+	>> To register a service with the root injector use providers property of @ngModule decorator of root module (app.module.ts) 
+	>> To register a service with the injector at a component level use providers property of @Component decorator 
+	
+Angular root injector
+---------------------
+
+	>> Real time applications may have more than one module in addition to the root application module (AppModule).
+	>> These additional feature modules should imports(like BrowserModule, FormsModule etc) inside our root module(app.module.ts), then only we will be able to use it in our application.
+	
+	
+Angular router navigate method
+------------------------------
+	
+	>> This method is useful when you want to navigate to another page programmatically. 
+	>> We want to place a button on employee view component to go back to the employee list component
+	
+	>> 1. Modify file: employee-view.component.html
+	
+			<input type="button" class="btn btn-primary" (click)="onBackButtonClick()" value="Back to Employee List">
+	
+	>> 2. Modify file: employee-view.component.ts
+		
+		>> Import router service from '@angular/router'
+		
+			import { ActivatedRoute, Router } from '@angular/router';
+		
+		>> Use dependency injection to get the router service
+		>> Specify a dependency on the Router service using the EmployeeComponent class constructor. 
+		>> The angular injector will automatically inject an instance of the Router service when an instance of EmployeeComponent is created.
+		
+			constructor(private _employeeService: EmployeeService, 
+				  private _activatedRoute: ActivatedRoute,
+				  private _router: Router) { }
+				  
+			onBackButtonClick():void{
+			  this._router.navigate(['/employees']);
+			}
 		
 		
 		
 		
+
+
+	
+	
