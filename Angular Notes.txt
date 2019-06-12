@@ -1424,9 +1424,53 @@ Angular router navigate method
 			}
 		
 		
+Promises in angular 2 example
+---------------------------
 		
+	>> In Angular we can use either Promises or Observables. 
+	>> By default the Angular Http service returns an Observable.
+	>> To use Promises instead of Observables we will have to first make a change to the service to return a Promise instead of an Observable. 
+	
+	MOdify File: employee-service.ts
 		
+		>> We need to change the return type of the method to Promise<IEmployee> from Observable<IEmployee>.
+		>> We are using toPromise() operator to return a Promise. 
+		>> When an exception is thrown handleErrorUsingPromise() logs the error to the console and throws the exception again
+		
+		getEmployeeByCodeUsingPromise(empCode:string):Promise<IEmployee>{
 
-
+			return this._httpClient.get<IEmployee>("http://localhost:9810/api/employee/GetEmployee/" + empCode)
+									.toPromise()
+									.catch(this.handleErrorUsingPromise); 
+		}
+		
+		//// Error handling method using "Promise"
+		handleErrorUsingPromise(errorResponse:Response):Promise<any>{
+			console.error(errorResponse);
+			throw (errorResponse);
+		}
+	
+	>> We also need to make corresponding changes in component from where we are calling this service
+	>> Because we called observable service using ".subscribe()"
+	>> To call the service which used "Promise", we have to use ".then()"
+	>> 
+	>> MOdify File: employee-view.component.ts
+	
+		//// Service call (Promise service)
+		this._employeeService.getEmployeeByCodeUsingPromise(empCode)
+				.then(
+					employeeData => {
+					  if(employeeData==null){
+						this.statusMessage1="Employee with the specified Employee Code does not exist";
+					  }
+					  else{
+						this.employeePromise=employeeData;
+					  }
+					},
+					error => {
+					  this.statusMessage1="Problem with service, try after sometime";
+					  console.log(error);
+					}
+		)
 	
 	
