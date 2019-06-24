@@ -388,6 +388,8 @@ Angular pipes "|"
 	>> Built in pipes include lowercase, uppercase, decimal, date, percent, currency etc
 	>> To apply a pipe on a bound property use the pipe character " | "
 	Examples:	
+	>> RxJS pipe is used to combine functional operators into a chain.
+	
 	uppercase pipe:
 	
 		<td>{{employee.code | uppercase}}</td>
@@ -1314,7 +1316,7 @@ Angular Singleton Service
 	
 	>> Modify File: app.module.ts
 		>> Add reference to user-preferences-service.ts
-		>> Register the service using the Providers property of @NgModule() decorator in app.module.ts file 
+		>> Register the service using the Providers property of @NgModule() decorator in "app.module.ts" file 
 		
 				import { EmployeeService } from './employee/employee-service';
 				import { UserPreferencesService } from './user-preferences-service';
@@ -1382,7 +1384,7 @@ Angular Injector
 	>> Angular injector is available at root level and each component level
 	>> If a service is registered with the root injector then that service is available for all components in our entire application including the components in lazy loaded modules. 
 	>> If a service is registered with the injector at the Application Root component level, then that service is available for all the components in the application except the components in lazy loaded modules.
-	>> If a service is registered with a specific component injector, then that service is available for that component and any of it's childre
+	>> If a service is registered with a specific component injector, then that service is available for that component and any of it's children
 	
 	>> We can register a service with the angular injector using the providers property of @Component decorator or @NgModule decorator. 
 	>> To register a service with the root injector use providers property of @ngModule decorator of root module (app.module.ts) 
@@ -1431,7 +1433,7 @@ Promises in angular 2 example
 	>> By default the Angular Http service returns an Observable.
 	>> To use Promises instead of Observables we will have to first make a change to the service to return a Promise instead of an Observable. 
 	
-	MOdify File: employee-service.ts
+	Modify File: employee-service.ts
 		
 		>> We need to change the return type of the method to Promise<IEmployee> from Observable<IEmployee>.
 		>> We are using toPromise() operator to return a Promise. 
@@ -1455,7 +1457,11 @@ Promises in angular 2 example
 	>> To call the service which used "Promise", we have to use ".then()"
 	>> 
 	>> MOdify File: employee-view.component.ts
-	
+		
+		employeePromise:IEmployee;
+		statusMessage:string = "Loading data, please wait.";
+		statusMessage1:string = "Loading data, please wait.";
+		
 		//// Service call (Promise service)
 		this._employeeService.getEmployeeByCodeUsingPromise(empCode)
 				.then(
@@ -1473,4 +1479,157 @@ Promises in angular 2 example
 					}
 		)
 	
+
+Angular promises vs observables
+-------------------------------
+
+	>> To work with asynchronous data we can use either Promises or Observables. 
 	
+	Promise:
+		>> Emits a single value
+		>> Not Lazy
+		>> Cannot be cancelled
+		
+	Observable:
+		>> Emits multiple values over a period of time
+		>> Lazy. An Observable is not called until we subscribe to the Observable
+		>> Can be cancelled using the unsubscribe() method
+		>> Observable provides operators like map, forEach, filter, reduce, retry, retryWhen etc.
+
+	
+	>> A Promise emits a single value where as an Observable emits multiple values over a period of time. 
+			You can think of an Observable like a stream which emits multiple items over a period of time 
+			and the same callback function is called for each item emitted. So with an Observable we can 
+			use the same API to handle asynchronous data whether that data is emitted as 
+			a single value or multiple values over a period of time. 
+			
+	>> A Promise is not lazy where as an Observable is Lazy.
+			we are subscribing to the Observable using the subscribe() method. 
+			An Observable is lazy because, it is not called and hence will not return any data 
+			until we subscribe using the subscribe() method. 
+			Observable is lazy and won't be called unless we subscribe using the subscribe() method.
+
+			Promise is NOT LAZY, Irrespective of whether you have then() method or not, 
+			service will immediately fire off a request across the network to the Service.
+
+	>> Observable with "Next"
+		Ex:
+			// Create simple observable that emits three values
+			const myObservable = of(1, 2, 3);
+
+
+			// Execute with the observer object
+			myObservable.subscribe(
+			  x => console.log('Observer got a next value: ' + x),
+			  err => console.error('Observer got an error: ' + err),
+			  () => console.log('Observer got a complete notification')
+			);
+
+			// Logs O/P:
+			// Observer got a next value: 1
+			// Observer got a next value: 2
+			// Observer got a next value: 3
+			// Observer got a complete notification
+	
+	
+Observable "retry" on error
+-------------------------
+	
+	"retry"
+	-------
+	
+	>> To re-subscribe to the Observable and retry, use the rxjs "retry" operator.
+	>> Import rxjs retry operator
+	>> USe .retry() method to the service call just before .subscribe()
+	>> retry()  : Chain the retry operator to retry on error
+	>> retry(3) : Passing number 3 to the retry operator indicating that we only want to retry 3 times.
+	>> The problem with the retry operator is that, it immediately retries when there is an error. 
+	
+	File: employee-service.ts
+	
+		>> Import rxjs retry operator
+			
+			import { map, retry, catchError } from 'rxjs/operators';
+			
+		>> Modify the web api call method getEmployeeByCode to include retry()
+		
+			getEmployeeByCode(empCode:string):Observable<IEmployee>{
+				return this._httpClient.get<IEmployee>("http://localhost:98109/api/employee/GetEmployee/" + empCode)
+									.pipe(
+										catchError(this.handleError),
+										//// Chain the retry operator to retry on error. Retry 3 times.
+										retry(3)
+									);
+			}
+	
+	"retryWhen" 
+	------------
+		>> Retrying again immediately does not make much sense
+		>> "retryWhen" operator allows us to specify delay in milliseconds
+		>> import "retryWhen"  from 'rxjs/operators' 
+	
+			import { map, retry, catchError, retryWhen, delay } from 'rxjs/operators';
+			
+			getEmployeeByCode(empCode:string):Observable<IEmployee>{
+				return this._httpClient.get<IEmployee>("http://localhost:98109/api/employee/GetEmployee/" + empCode)
+									.pipe(
+										catchError(this.handleError),
+										//// Retry with a delay of 1000 milliseconds (i.e 1 second)
+										retryWhen(err => err.pipe(
+													delay(1000))
+												)
+									);
+			}
+	
+	"scan"  operator
+	----------------
+		>> If we want to retry every 1000 milli-seconds only for a maximum of 3 times then we can use rxjs "scan" operator
+		>> import "scan"  from 'rxjs/operators' 
+		
+			import { map, retry, catchError, retryWhen, delay, take, scan } from 'rxjs/operators';
+			
+			getEmployeeByCode(empCode:string):Observable<IEmployee>{
+				return this._httpClient.get<IEmployee>("http://localhost:98109/api/employee/GetEmployee/" + empCode)
+									.pipe(
+										catchError(this.handleError),
+										//// Retry with a delay of 1000 milliseconds (i.e 1 second)
+										retryWhen(err => err.pipe(
+													delay(1000),
+													scan((retryCount, val)=>{
+															retryCount += 1;
+															if (retryCount < 3) {
+																return retryCount;
+															}
+															else {
+																throw (err);
+															}
+														}, 0)
+													)
+												)
+									);
+			}
+			
+		
+Angular observable un-subscribe
+-------------------------------
+
+	>> To un-subscribe a service we can use "unsubscribe"
+	>> To use "unsubscribe" we have to import "Subscription" from 'rxjs'
+	>> and observable service call subscribe should assign to Subscription.
+	
+		import { Subscription } from 'rxjs';
+		
+		subscription:Subscription;
+		
+		this.subscription = this._employeeService.getEmployeeByCode(empCode)
+            .subscribe(
+					....
+					)
+		
+		if(!this.subscription.closed){
+			this.subscription.unsubscribe();
+		}
+		
+		
+		
+		
