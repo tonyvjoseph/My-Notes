@@ -1630,6 +1630,15 @@ Angular observable un-subscribe
 			this.subscription.unsubscribe();
 		}
 		
+====================================================================================================================================================
+
+Angular CLI Tutorials
+
+	e2e:
+		Contains end-to-end tests and configuration files.
+	karma.config.js:
+		Configuration file for Karma(Uni test runner.)
 		
+	
 		
 		

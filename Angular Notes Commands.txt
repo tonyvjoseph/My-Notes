@@ -65,8 +65,19 @@ Solution:
 04. now you can do "ng-serve" to start your angular app at the same port 4200
 
 ==========================================================================
+--dry-run 
+----------
+	>> Use --dry-run flag to see the list of files and folders that will be generated(or going to generate)
+	>> ex: 
+			ng g c abc --dry-run
+			OR
+			ng g c abc -d
+		This command wont generate file physically. 
+		
+			
 Create NEw Component:
 ---------------------
+Scenario-1:
 ng generate component my-new-component
 OR
 ng g component my-new-component
@@ -74,15 +85,18 @@ OR
 ng g c my-new-component
 //To create a new component
  
+Scenario-2:
 ng g component plainsight/yourchildcompname
 //the above will create a yourchildcompname component and the necessary files inside plainsight folder. 
 //if plainsight folder doesn't exist then it will create that folder as well.
 
+Scenario-3:
 Create New Folder and Component:
 01. Right Click on the existing folder and open a new Terminal and 
 02. generate new component. It will create a new folder also
 Ex: ng g c employee   //This will create employee component inside employee folder.
 
+Scenario-4:
 Create a component WithOut create a New Folder:
 	ng g component plainsight/new-component-name --flat
 	OR
@@ -90,7 +104,22 @@ Create a component WithOut create a New Folder:
 02. generate new component using below code.
 	ng g component new-component-name --flat
 	
-	Reference: https://angular.io/cli/generate
+	
+Scenario-5:
+Create a component without creating html file, css file and test file.
+Means Create a component with in-line template(-it) and in-line css(-is) and without test file.
+Ex:
+	ng g c abc -it -is --spec=false
+	
+Above command will generate a type script component without creating html file, css file and test file.
+Use --dry-run or -d command to see the list of files which are going to generate.
+This command wont generate file physically. 
+Ex:
+	ng g c abc -d -it -is --spec=false
+	
+
+Reference: https://angular.io/cli/generate
+
 	
 Create New Class:
 -----------------
@@ -118,3 +147,40 @@ New Interface:
 --------------
 	ng g interface Employee --skipTests=true
 	>> It will create a interface "Employee.ts"
+	
+
+New Service:
+------------
+	ng g s serviceName
+	>> Use above command to create a new service
+	
+	
+
+	
+Install Bootstrap
+-----------------
+	>> We will be using Bootstrap for styling. 
+	>> Go to project folder and Install bootstrap using the following NPM command
+		
+		npm install bootstrap@3 jquery --save
+		
+	>> In Angular CLI configuration file include the path to the Bootstrap CSS file in the styles array. 
+		File: angular.json
+		
+		"styles": [
+				"src/styles.css",
+				"node_modules/bootstrap/dist/css/bootstrap.min.css"
+			]
+			
+	>> Bootstrap relies on jQuery for some of it's features. 
+	>> Include the path to jQuery and Bootstrap jQuery files in the scripts array in angular.json file. 
+	
+		"scripts": [
+			  "node_modules/jquery/dist/jquery.min.js",
+			  "node_modules/bootstrap/dist/js/bootstrap.min.js"
+			]	
+	
+
+
+			
+	
